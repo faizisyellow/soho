@@ -1,0 +1,13 @@
+{{define "serviceMap"}}
+
+{{.}}Services interface {
+        Create(ctx context.Context) (string, error)
+        FindAll(ctx context.Context) ([]repository.{{.Name}}Model, error)
+        FindById(ctx context.Context, id int) (repository.{{.Name}}Model, error)
+        Update(ctx context.Context, id int, nw repository.{{.Name}}Model) error
+        Delete(ctx context.Context, id int) error
+	}
+
+{{end}}
+
+

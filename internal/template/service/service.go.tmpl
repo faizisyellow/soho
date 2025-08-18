@@ -1,0 +1,41 @@
+{{define service}}
+
+package service
+
+import (
+        "context"
+        {{.Module}}/"internal/repository"
+)
+
+type {{.Name}}Services struct {
+    Repository repository.Repository
+}
+
+
+func ({{.Name}} *{{.Name}}Services) Create(ctx context.Context) (string, error) {
+ 
+    return "", nil
+}
+
+func ({{.Name}} *{{.Name}}Services) FindAll(ctx context.Context) ([]repository.{{.Name}}Model, error) {
+
+    return nil, nil
+}
+
+func({{.Name}} *{{.Name}}Services) FindById(ctx context.Context, id int) (repository.{{.Name}}Model, error) {
+
+    return repository.{{.Name}}Model{},nil
+}
+
+func ({{.Name}} *{{.Name}}Services) Update(ctx context.Context, id int, nw repository.{{.Name}}Model) error {
+
+    return nil
+}
+
+func ({{.Name}} *{{.Name}}Services) Delete(ctx context.Context, id int) error {
+
+    return nil
+}
+
+
+{{end}}
