@@ -1,0 +1,11 @@
+{{define route}}
+
+    r.Route("/{{.}}", func(r chi.Router) {
+			r.Post("/", app.Create{{.}}Handler)
+			r.Get("/", app.GetAll{{.}}Handler)
+			r.Get("/{id}", app.Get{{.}}Handler)
+			r.Patch("/{id}", app.Update{{.}}Handler)
+			r.Delete("/{id}", app.Delete{{.}}Handler)
+	})
+
+{{end}}

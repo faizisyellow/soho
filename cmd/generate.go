@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/faizisyellow/soho/internal/generate"
 	"github.com/spf13/cobra"
 )
 
@@ -37,7 +39,15 @@ var generateCmd = &cobra.Command{
 			fmt.Println("you choose should be repo", option)
 
 		case Service.String():
-			fmt.Println("you choose should be service", option)
+			dir, err := os.Getwd()
+			if err != nil {
+				return err
+			}
+
+			err = generate.GenerateService(args[1], dir, false)
+			if err != nil {
+				return err
+			}
 
 		case Handler.String():
 			fmt.Println("you choose should be hanlder", option)

@@ -26,14 +26,14 @@ func (st *ServiceTemplate) NewService(modulePath string) ([]byte, error) {
 		Name:   st.Name,
 	}
 
-	temp, err := template.ParseFiles("service.go.tmpl")
+	temp, err := template.ParseFiles("./internal/template/service/service.go.tmpl")
 	if err != nil {
 		return nil, err
 	}
 
 	b := new(bytes.Buffer)
 
-	err = temp.ExecuteTemplate(b, "service", data)
+	err = temp.Execute(b, data)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (st *ServiceTemplate) ServiceTestTemplate() ([]byte, error) {
 }
 
 func (st *ServiceTemplate) ServiceMapTemplate() ([]byte, error) {
-	temp, err := template.ParseFiles("serviceMap.go.tmpl")
+	temp, err := template.ParseFiles("./internal/template/service/serviceMap.go.tmpl")
 	if err != nil {
 		return nil, err
 	}

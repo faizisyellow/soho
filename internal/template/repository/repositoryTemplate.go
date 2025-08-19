@@ -43,6 +43,23 @@ func (rt *RepositoryTemplate) RepositoryTest() ([]byte, error) {
 	return b.Bytes(), nil
 }
 
+func (rt *RepositoryTemplate) RepositoryMap() ([]byte, error) {
+
+	temp, err := template.ParseFiles("repositoryMap.go.tmpl")
+	if err != nil {
+		return nil, err
+	}
+
+	b := new(bytes.Buffer)
+
+	err = temp.ExecuteTemplate(b, "repositoryMap", rt.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.Bytes(), nil
+}
+
 func (rt *RepositoryTemplate) RepositoryImplementation() ([]byte, error) {
 	temp := template.New("repositoryImplementation")
 
