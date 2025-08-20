@@ -1,5 +1,4 @@
-{{define repositoryMap}}
-    I
+{{define "repositoryMap"}}
     {{.}} interface {
 		Insert(ctx context.Context) error
 		GetAll(ctx context.Context) ([]{{.}}Model, error)

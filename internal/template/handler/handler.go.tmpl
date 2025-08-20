@@ -1,6 +1,7 @@
-{{define handler}}
-
+{{define "handler"}}
 package main
+
+import "net/http"
 
 func (app *Application) Create{{.}}Handler(w http.ResponseWriter, r *http.Request){
     
@@ -21,5 +22,4 @@ func (app *Application) Update{{.}}Handler(w http.ResponseWriter, r *http.Reques
 func (app *Application) Delete{{.}}Handler(w http.ResponseWriter, r *http.Request){
     
 }
-
 {{end}}

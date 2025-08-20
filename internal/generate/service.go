@@ -1,6 +1,7 @@
 package generate
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -19,23 +20,15 @@ type TomlConfig struct {
 }
 
 const (
-	FILENAME        = ".soho.toml"
+	TOMLFILENAME    = ".soho.toml"
 	SERVICEFILENAME = "service.go"
 )
 
 func GenerateService(name, rootPath string, withTest bool) error {
 
 	var tmlCfg TomlConfig
-	tomlf := make([]byte, 90)
 
-	f, err := os.Open(filepath.Join(rootPath, FILENAME))
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-
-	_, err = f.Read(tomlf)
+	tomlf, err := os.ReadFile(filepath.Join(rootPath, TOMLFILENAME))
 	if err != nil {
 		return err
 	}
@@ -56,7 +49,7 @@ func GenerateService(name, rootPath string, withTest bool) error {
 
 	var filename strings.Builder
 	filename.WriteString(strings.ToLower(name))
-	filename.WriteString(".go.txt")
+	filename.WriteString(".go")
 
 	genFile, err := os.Create(filepath.Join(rootPath, tmlCfg.Service, filename.String()))
 	if err != nil {
@@ -68,33 +61,16 @@ func GenerateService(name, rootPath string, withTest bool) error {
 		return err
 	}
 
-	// Adding new service map
-	serviceDir, err := os.ReadDir(filepath.Join(rootPath, tmlCfg.Service))
+	serviceInterfacePath := filepath.Join(rootPath, tmlCfg.Service, SERVICEFILENAME)
+
+	file, err := os.Open(serviceInterfacePath)
 	if err != nil {
 		return err
 	}
 
-	var isServiceDirFound bool
+	defer file.Close()
 
-	for _, serv := range serviceDir {
-
-		if serv.Name() == SERVICEFILENAME {
-			isServiceDirFound = true
-		}
-	}
-
-	if !isServiceDirFound {
-		return fmt.Errorf("service file not found")
-	}
-
-	serviceInterfaceFile, err := os.OpenFile(filepath.Join(rootPath, tmlCfg.Service, SERVICEFILENAME), os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
-	}
-
-	defer serviceInterfaceFile.Close()
-
-	lastBlockServiceMap, err := utils.FindBlockCode(serviceInterfaceFile, "interface")
+	lineNum, err := utils.FindBlockEnd(file, "Service struct")
 	if err != nil {
 		return err
 	}
@@ -104,35 +80,34 @@ func GenerateService(name, rootPath string, withTest bool) error {
 		return err
 	}
 
-	// _, err = serviceInterfaceFile.WriteAt(datMap, int64(lastBlockServiceMap+1))
-	// if err != nil {
-	// 	return err
-	// }
+	if err := AppendData(serviceInterfacePath, datMap, lineNum); err != nil {
+		return err
+	}
 
-	// TODO: append data to existing file
-	err = AppendData(filepath.Join(rootPath, tmlCfg.Service, SERVICEFILENAME), datMap, lastBlockServiceMap+1)
+	reFile, err := os.Open(serviceInterfacePath)
 	if err != nil {
 		return err
 	}
 
-	// lastBlockServiceImp, err := utils.FindBlockCode(serviceInterfaceFile, "return")
-	// if err != nil {
-	// 	return err
-	// }
+	defer reFile.Close()
 
-	// datImp, err := serviceTemp.ServiceImplementation()
-	// if err != nil {
-	// 	return err
-	// }
+	lineNumServiceImp, err := utils.FindBlockEnd(reFile, "return &Service{")
+	if err != nil {
+		return err
+	}
 
-	// _, err = serviceInterfaceFile.WriteAt(datImp, int64(lastBlockServiceImp))
-	// if err != nil {
-	// 	return err
-	// }
+	datImp, err := serviceTemp.ServiceImplementation()
+	if err != nil {
+		return err
+	}
+
+	if err := AppendData(serviceInterfacePath, datImp, lineNumServiceImp); err != nil {
+		return err
+	}
 
 	if withTest {
 		var filenameTest strings.Builder
-		filenameTest.WriteString(name)
+		filenameTest.WriteString(strings.ToLower(name))
 		filenameTest.WriteString("_test")
 		filenameTest.WriteString(".go")
 
@@ -156,22 +131,36 @@ func GenerateService(name, rootPath string, withTest bool) error {
 	return nil
 }
 
-func AppendData(path string, data []byte, at int) error {
-
-	// Read all file content
-	content, err := os.ReadFile(path)
+func AppendData(path string, data []byte, lineNum int) error {
+	file, err := os.Open(path)
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 
-	// Prevent out-of-bounds index
-	if at < 0 || at > len(content) {
-		return fmt.Errorf("index %d out of bounds", at)
+	var lines []string
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		return err
 	}
 
-	// Insert the new data at position `at`
-	newContent := append(content[:at], append(data, content[at:]...)...)
+	// Validate line index
+	if lineNum < 0 || lineNum > len(lines) {
+		return fmt.Errorf("line number %d out of bounds", lineNum)
+	}
 
-	// Write back to the file (overwrite)
-	return os.WriteFile(path, newContent, 0644)
+	// Convert inserted block into multiple lines
+	newLines := strings.Split(strings.TrimSuffix(string(data), "\n"), "\n")
+
+	// Insert at lineNum
+	lines = append(lines[:lineNum], append(newLines, lines[lineNum:]...)...)
+
+	// Join back into text
+	output := strings.Join(lines, "\n")
+
+	return os.WriteFile(path, []byte(output), 0644)
 }

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/faizisyellow/soho/internal/generate"
+	"github.com/faizisyellow/soho/internal/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -31,30 +32,46 @@ var generateCmd = &cobra.Command{
 	Short:   "generate generates files to project",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		option := args[0]
+		var option = args[0]
+
+		// to upper first character.
+		name := utils.ToUpperN(args[1], 0)
+
+		dir, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+
+		isWithTest, err := cmd.Flags().GetBool("test")
+		if err != nil {
+			return err
+		}
 
 		switch option {
 		case Repository.String():
 
-			fmt.Println("you choose should be repo", option)
-
+			err := generate.GenerateRepository(name, dir, isWithTest)
+			if err != nil {
+				return err
+			}
 		case Service.String():
-			dir, err := os.Getwd()
+
+			err := generate.GenerateService(name, dir, isWithTest)
 			if err != nil {
 				return err
 			}
-
-			err = generate.GenerateService(args[1], dir, false)
-			if err != nil {
-				return err
-			}
-
 		case Handler.String():
-			fmt.Println("you choose should be hanlder", option)
 
+			err := generate.GenerateHandler(name, dir, isWithTest)
+			if err != nil {
+				return err
+			}
 		case Resource.String():
-			fmt.Println("you choose should be resource", option)
 
+			err := generate.GenerateResource(name, dir, isWithTest)
+			if err != nil {
+				return err
+			}
 		default:
 			return fmt.Errorf("invalid option, see examples to set the options")
 		}

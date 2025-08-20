@@ -1,11 +1,9 @@
-{{define route}}
-
-    r.Route("/{{.}}", func(r chi.Router) {
-			r.Post("/", app.Create{{.}}Handler)
-			r.Get("/", app.GetAll{{.}}Handler)
-			r.Get("/{id}", app.Get{{.}}Handler)
-			r.Patch("/{id}", app.Update{{.}}Handler)
-			r.Delete("/{id}", app.Delete{{.}}Handler)
-	})
-
+{{define "route"}}
+    	r.Route("/{{.Endpoint}}", func(r chi.Router) {
+			r.Post("/", app.Create{{.Handler}}Handler)
+			r.Get("/", app.GetAll{{.Handler}}Handler)
+			r.Get("/{id}", app.Get{{.Handler}}Handler)
+			r.Patch("/{id}", app.Update{{.Handler}}Handler)
+			r.Delete("/{id}", app.Delete{{.Handler}}Handler)
+		})
 {{end}}

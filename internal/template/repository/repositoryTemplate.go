@@ -2,6 +2,7 @@ package template
 
 import (
 	"bytes"
+	"embed"
 	"text/template"
 )
 
@@ -9,9 +10,20 @@ type RepositoryTemplate struct {
 	Name string
 }
 
+var (
+	//go:embed repository.go.tmpl
+	repositoryEmbed embed.FS
+
+	//go:embed repository_test.go.tmpl
+	repositoryTestEmbed embed.FS
+
+	//go:embed repositoryMap.go.tmpl
+	repositoryMapEmbed embed.FS
+)
+
 func (rt *RepositoryTemplate) NewRepository() ([]byte, error) {
 
-	temp, err := template.ParseFiles("repository.go.tmpl")
+	temp, err := template.ParseFS(repositoryEmbed, "repository.go.tmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +40,7 @@ func (rt *RepositoryTemplate) NewRepository() ([]byte, error) {
 
 func (rt *RepositoryTemplate) RepositoryTest() ([]byte, error) {
 
-	temp, err := template.ParseFiles("repository_test.go.tmpl")
+	temp, err := template.ParseFS(repositoryTestEmbed, "repository_test.go.tmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +57,7 @@ func (rt *RepositoryTemplate) RepositoryTest() ([]byte, error) {
 
 func (rt *RepositoryTemplate) RepositoryMap() ([]byte, error) {
 
-	temp, err := template.ParseFiles("repositoryMap.go.tmpl")
+	temp, err := template.ParseFS(repositoryMapEmbed, "repositoryMap.go.tmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +75,7 @@ func (rt *RepositoryTemplate) RepositoryMap() ([]byte, error) {
 func (rt *RepositoryTemplate) RepositoryImplementation() ([]byte, error) {
 	temp := template.New("repositoryImplementation")
 
-	temp = template.Must(temp.Parse("{{.}}{Db: db}"))
+	temp = template.Must(temp.Parse("{{.}}: &{{.}}Repository{Db: db},"))
 
 	b := new(bytes.Buffer)
 

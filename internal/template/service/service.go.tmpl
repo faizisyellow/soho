@@ -1,8 +1,9 @@
+{{define "service"}}
 package service
 
 import (
-        "context"
-        {{.Module}}/"internal/repository"
+    "context"
+    "{{.Module}}/internal/repository"
 )
 
 type {{.Name}}Services struct {
@@ -34,3 +35,4 @@ func ({{.Name}} *{{.Name}}Services) Delete(ctx context.Context, id int) error {
 
     return nil
 }
+{{end}}

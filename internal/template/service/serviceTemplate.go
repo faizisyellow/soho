@@ -2,6 +2,8 @@ package template
 
 import (
 	"bytes"
+	"embed"
+
 	"text/template"
 
 	"github.com/faizisyellow/soho/internal/utils"
@@ -10,6 +12,18 @@ import (
 type ServiceTemplate struct {
 	Name string
 }
+
+var (
+
+	//go:embed service.go.tmpl
+	serviceEmbed embed.FS
+
+	//go:embed service_test.go.tmpl
+	serviceTestEmbed embed.FS
+
+	//go:embed serviceMap.go.tmpl
+	serviceMapEmbed embed.FS
+)
 
 func (st *ServiceTemplate) NewService(modulePath string) ([]byte, error) {
 
@@ -26,14 +40,14 @@ func (st *ServiceTemplate) NewService(modulePath string) ([]byte, error) {
 		Name:   st.Name,
 	}
 
-	temp, err := template.ParseFiles("./internal/template/service/service.go.tmpl")
+	temp, err := template.ParseFS(serviceEmbed, "service.go.tmpl")
 	if err != nil {
 		return nil, err
 	}
 
 	b := new(bytes.Buffer)
 
-	err = temp.Execute(b, data)
+	err = temp.ExecuteTemplate(b, "service", data)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +57,7 @@ func (st *ServiceTemplate) NewService(modulePath string) ([]byte, error) {
 
 func (st *ServiceTemplate) ServiceTestTemplate() ([]byte, error) {
 
-	temp, err := template.ParseFiles("service_test.go.tmpl")
+	temp, err := template.ParseFS(serviceTestEmbed, "service_test.go.tmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +73,8 @@ func (st *ServiceTemplate) ServiceTestTemplate() ([]byte, error) {
 }
 
 func (st *ServiceTemplate) ServiceMapTemplate() ([]byte, error) {
-	temp, err := template.ParseFiles("./internal/template/service/serviceMap.go.tmpl")
+
+	temp, err := template.ParseFS(serviceMapEmbed, "serviceMap.go.tmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +94,7 @@ func (st *ServiceTemplate) ServiceImplementation() ([]byte, error) {
 
 	temp := template.New("serviceImplementation")
 
-	temp = template.Must(temp.Parse("{{.}}Service{Repo: store}"))
+	temp = template.Must(temp.Parse("{{.}}Service: &{{.}}Services{Repository: store},"))
 
 	b := new(bytes.Buffer)
 

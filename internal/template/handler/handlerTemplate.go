@@ -2,6 +2,7 @@ package template
 
 import (
 	"bytes"
+	"embed"
 	"text/template"
 )
 
@@ -9,9 +10,18 @@ type HandlerTemplate struct {
 	Name string
 }
 
+var (
+
+	//go:embed handler.go.tmpl
+	handlerEmbed embed.FS
+
+	//go:embed handler_test.go.tmpl
+	handlerTestEmbed embed.FS
+)
+
 func (ht *HandlerTemplate) Handler() ([]byte, error) {
 
-	temp, err := template.ParseFiles("handler.go.tmpl")
+	temp, err := template.ParseFS(handlerEmbed, "handler.go.tmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +38,7 @@ func (ht *HandlerTemplate) Handler() ([]byte, error) {
 
 func (ht *HandlerTemplate) HandlerTest() ([]byte, error) {
 
-	temp, err := template.ParseFiles("handler_test.go.tmpl")
+	temp, err := template.ParseFS(handlerTestEmbed, "handler_test.go.tmpl")
 	if err != nil {
 		return nil, err
 	}
