@@ -76,10 +76,10 @@ func GenerateHandler(name, root string, isWithTest bool) error {
 
 	}
 
-	fmt.Printf("created handler at %v", filepath.Join(root, tomlcfg.Handler))
+	fmt.Printf("handler created at %v\n", filepath.Join(root, tomlcfg.Handler))
 
 	if isWithTest {
-		fmt.Printf("created handler test at %v", filepath.Join(root, tomlcfg.Handler))
+		fmt.Printf("handler test created at %v\n", filepath.Join(root, tomlcfg.Handler))
 	}
 
 	return nil

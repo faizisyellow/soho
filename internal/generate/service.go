@@ -128,10 +128,10 @@ func GenerateService(name, rootPath string, withTest bool) error {
 
 	}
 
-	fmt.Printf("created service at %v", filepath.Join(rootPath, tmlCfg.Service))
+	fmt.Printf("service created at %v\n", filepath.Join(rootPath, tmlCfg.Service))
 
 	if withTest {
-		fmt.Printf("created service test at %v", filepath.Join(rootPath, tmlCfg.Service))
+		fmt.Printf("service test created at %v\n", filepath.Join(rootPath, tmlCfg.Service))
 	}
 
 	return nil

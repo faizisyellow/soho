@@ -122,10 +122,10 @@ func GenerateRepository(name, root string, isWithTest bool) error {
 
 	}
 
-	fmt.Printf("created repository at %v", filepath.Join(root, tomlcfg.Repository))
+	fmt.Printf("repository created at %v\n", filepath.Join(root, tomlcfg.Repository))
 
 	if isWithTest {
-		fmt.Printf("created repository test at %v", filepath.Join(root, tomlcfg.Repository))
+		fmt.Printf("repository test created at %v\n", filepath.Join(root, tomlcfg.Repository))
 	}
 
 	return nil
