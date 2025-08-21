@@ -4,8 +4,8 @@
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/faizisyellow/soho)
 
-soHo is a CLI tool for generating CRUD files into [falcon](https://github.com/faizisyellow/falcon) Go REST APIs project.
-it assists you to generate CRUD files to get faster when developing REST APIs.
+soHo is a CLI tool for generating CRUD files into [falcon](https://github.com/faizisyellow/falcon) Go REST APIs project.<br>
+It assists you to generate CRUD files to get faster when developing REST APIs.
 
 ## Features
 
