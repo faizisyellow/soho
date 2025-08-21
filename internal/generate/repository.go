@@ -1,6 +1,7 @@
 package generate
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -119,6 +120,12 @@ func GenerateRepository(name, root string, isWithTest bool) error {
 			return err
 		}
 
+	}
+
+	fmt.Printf("created repository at %v", filepath.Join(root, tomlcfg.Repository))
+
+	if isWithTest {
+		fmt.Printf("created repository test at %v", filepath.Join(root, tomlcfg.Repository))
 	}
 
 	return nil

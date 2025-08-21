@@ -1,6 +1,7 @@
 package generate
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -73,6 +74,12 @@ func GenerateHandler(name, root string, isWithTest bool) error {
 			return err
 		}
 
+	}
+
+	fmt.Printf("created handler at %v", filepath.Join(root, tomlcfg.Handler))
+
+	if isWithTest {
+		fmt.Printf("created handler test at %v", filepath.Join(root, tomlcfg.Handler))
 	}
 
 	return nil
