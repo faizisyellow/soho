@@ -46,6 +46,8 @@ func GenerateHandler(name, root string, isWithTest bool) error {
 		return err
 	}
 
+	defer genFile.Close()
+
 	_, err = genFile.Write(handlerDat)
 	if err != nil {
 		return err
@@ -74,13 +76,10 @@ func GenerateHandler(name, root string, isWithTest bool) error {
 			return err
 		}
 
+		defer fmt.Printf("handler test created at %v\n", filepath.Join(root, tomlcfg.Handler))
 	}
 
 	fmt.Printf("handler created at %v\n", filepath.Join(root, tomlcfg.Handler))
-
-	if isWithTest {
-		fmt.Printf("handler test created at %v\n", filepath.Join(root, tomlcfg.Handler))
-	}
 
 	return nil
 }

@@ -47,6 +47,8 @@ func GenerateRepository(name, root string, isWithTest bool) error {
 		return err
 	}
 
+	defer genFile.Close()
+
 	_, err = genFile.Write(repoDat)
 	if err != nil {
 		return err
@@ -120,13 +122,10 @@ func GenerateRepository(name, root string, isWithTest bool) error {
 			return err
 		}
 
+		defer fmt.Printf("repository test created at %v\n", filepath.Join(root, tomlcfg.Repository))
 	}
 
 	fmt.Printf("repository created at %v\n", filepath.Join(root, tomlcfg.Repository))
-
-	if isWithTest {
-		fmt.Printf("repository test created at %v\n", filepath.Join(root, tomlcfg.Repository))
-	}
 
 	return nil
 }

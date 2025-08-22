@@ -56,6 +56,8 @@ func GenerateService(name, rootPath string, withTest bool) error {
 		return err
 	}
 
+	defer genFile.Close()
+
 	_, err = genFile.Write(dat)
 	if err != nil {
 		return err
@@ -126,13 +128,11 @@ func GenerateService(name, rootPath string, withTest bool) error {
 			return err
 		}
 
+		defer fmt.Printf("service test created at %v\n", filepath.Join(rootPath, tmlCfg.Service))
+
 	}
 
 	fmt.Printf("service created at %v\n", filepath.Join(rootPath, tmlCfg.Service))
-
-	if withTest {
-		fmt.Printf("service test created at %v\n", filepath.Join(rootPath, tmlCfg.Service))
-	}
 
 	return nil
 }
